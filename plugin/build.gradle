@@ -1,0 +1,32 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle:2.1.0'
+
+    compile 'org.aspectj:aspectjtools:1.8.9'
+    compile 'org.aspectj:aspectjrt:1.8.9'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// 上传插件
+uploadArchives {
+    repositories.mavenDeployer {
+        // 本地仓库路径，放到项目根目录下的 repo 文件
+        repository(url: uri('../repo'))
+
+        // groupId
+        pom.groupId = 'com.yxhuang'
+
+        // artifactId
+        pom.artifactId = 'autotrack.android'
+
+        // 插件版本号
+        pom.version = '1.0.0'
+    }
+}

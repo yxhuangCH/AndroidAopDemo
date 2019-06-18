@@ -9,10 +9,13 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import org.android10.gintonic.annotation.DebugTrace;
+
 /**
  *
  */
 public class MyFrameLayout extends FrameLayout {
+
   public MyFrameLayout(Context context) {
     super(context);
   }
@@ -25,9 +28,11 @@ public class MyFrameLayout extends FrameLayout {
     super(context, attrs, defStyle);
   }
 
+  @DebugTrace
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+      sleep(100);
   }
 
   @Override
@@ -39,4 +44,12 @@ public class MyFrameLayout extends FrameLayout {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
   }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

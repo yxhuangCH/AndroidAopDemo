@@ -4,13 +4,21 @@
  */
 package org.android10.gintonic.aspect;
 
+import android.util.Log;
+
 import org.android10.gintonic.internal.DebugLog;
 import org.android10.gintonic.internal.StopWatch;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.FieldSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.aspectj.lang.reflect.SourceLocation;
+
+import java.lang.reflect.Field;
 
 /**
  * Aspect representing the cross cutting-concern: Method and Constructor Tracing.
@@ -32,9 +40,11 @@ public class TraceAspect {
 
   @Around("methodAnnotatedWithDebugTrace() || constructorAnnotatedDebugTrace()")
   public Object weaveJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
+    // joint 对象信息
     MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
     String className = methodSignature.getDeclaringType().getSimpleName();
     String methodName = methodSignature.getName();
+
 
     final StopWatch stopWatch = new StopWatch();
     stopWatch.start();
@@ -42,6 +52,18 @@ public class TraceAspect {
     stopWatch.stop();
 
     DebugLog.log(className, buildLogMessage(methodName, stopWatch.getTotalTimeMillis()));
+
+
+
+    // 源代码部分信息
+    SourceLocation sourceLocation = joinPoint.getSourceLocation();
+    String fileName = sourceLocation.getFileName();
+    int line = sourceLocation.getLine();
+    String soucreClassName = sourceLocation.getWithinType().getName();
+    DebugLog.log(className, "\nfileName = " + fileName + "\nline = " + line + "\nsoucreClassName = " + soucreClassName);
+
+    // 静态部分
+    JoinPoint.StaticPart staticPart = joinPoint.getStaticPart();
 
     return result;
   }
@@ -65,4 +87,75 @@ public class TraceAspect {
 
     return message.toString();
   }
+
+    private static final String POINTCUT_ONMETHOD =
+            "execution(* android.app.Activity.on**(..))";
+
+//    @Before(POINTCUT_ONMETHOD)
+//    public void beforeOnMethod(JoinPoint joinPoint) {
+//        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+//        String className = methodSignature.getDeclaringType().getSimpleName();
+//        String methodName = methodSignature.getName();
+//        Log.i(className, "before " + methodName + " log");
+//
+//    }
+//
+//    @After(POINTCUT_ONMETHOD)
+//    public void onMethLog(JoinPoint joinPoint){
+//        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+//        String className = methodSignature.getDeclaringType().getSimpleName();
+//        String methodName = methodSignature.getName();
+//        Log.i(className, "after " + methodName + " log");
+//    }
+
+    @Pointcut(POINTCUT_ONMETHOD)
+    public void annotationOnMethodTrace(){
+
+    }
+
+    @Around("annotationOnMethodTrace()")
+    public Object weaveOnMethodJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
+
+      MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+      String className = methodSignature.getDeclaringType().getSimpleName();
+      String methodName = methodSignature.getName();
+
+      Log.i("MainActivity", "before joinPoint proceed className = " + className + " methodName = " + methodName);
+
+      Object result  = joinPoint.proceed();
+      Log.i("MainActivity", "after joinPoint proceed className = " + className + " methodName = " + methodName);
+
+      return result;
+    }
+
+
+
+
+    //　set field 的切面
+    private static final String POINTCUT_FILEED =
+            "set(int org.android10.viewgroupperformance.activity.MainActivity.mTest) && args(newValue) && target(t)";
+
+    @Before(POINTCUT_FILEED)
+    public void onFiled(JoinPoint joinPoint, Object newValue, Object t) throws IllegalAccessException {
+
+        FieldSignature fieldSignature = (FieldSignature) joinPoint.getSignature();
+        String fileName = fieldSignature.getName();
+        Field field = fieldSignature.getField();
+        field.setAccessible(true);
+        Class clazz = fieldSignature.getFieldType();
+        String clazzName = clazz.getSimpleName();
+
+        Object oldValue = field.get(t);
+
+        Log.i("MainActivity",
+                   "\nonFiled value = " + newValue.toString()
+                        + "\ntarget = " + t.toString()
+                        + "\n fieldSignature =" + fieldSignature.toString()
+                        + "\nfield = " + field.toString()
+                        + "\nFileName = " + fileName
+                        + "\nclazzName = " + clazzName
+                        + " \noldValue = " + oldValue.toString() );
+
+
+    }
 }
