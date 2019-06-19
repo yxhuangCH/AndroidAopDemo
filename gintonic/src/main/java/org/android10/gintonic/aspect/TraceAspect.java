@@ -108,25 +108,25 @@ public class TraceAspect {
 //        Log.i(className, "after " + methodName + " log");
 //    }
 
-    @Pointcut(POINTCUT_ONMETHOD)
-    public void annotationOnMethodTrace(){
-
-    }
-
-    @Around("annotationOnMethodTrace()")
-    public Object weaveOnMethodJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
-
-      MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-      String className = methodSignature.getDeclaringType().getSimpleName();
-      String methodName = methodSignature.getName();
-
-      Log.i("MainActivity", "before joinPoint proceed className = " + className + " methodName = " + methodName);
-
-      Object result  = joinPoint.proceed();
-      Log.i("MainActivity", "after joinPoint proceed className = " + className + " methodName = " + methodName);
-
-      return result;
-    }
+//    @Pointcut(POINTCUT_ONMETHOD)
+//    public void annotationOnMethodTrace(){
+//
+//    }
+//
+//    @Around("annotationOnMethodTrace()")
+//    public Object weaveOnMethodJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
+//
+//      MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+//      String className = methodSignature.getDeclaringType().getSimpleName();
+//      String methodName = methodSignature.getName();
+//
+//      Log.i("MainActivity", "before joinPoint proceed className = " + className + " methodName = " + methodName);
+//
+//      Object result  = joinPoint.proceed();
+//      Log.i("MainActivity", "after joinPoint proceed className = " + className + " methodName = " + methodName);
+//
+//      return result;
+//    }
 
 
 
@@ -145,6 +145,7 @@ public class TraceAspect {
         Class clazz = fieldSignature.getFieldType();
         String clazzName = clazz.getSimpleName();
 
+        // 获取旧的值
         Object oldValue = field.get(t);
 
         Log.i("MainActivity",
@@ -155,7 +156,6 @@ public class TraceAspect {
                         + "\nFileName = " + fileName
                         + "\nclazzName = " + clazzName
                         + " \noldValue = " + oldValue.toString() );
-
 
     }
 }
