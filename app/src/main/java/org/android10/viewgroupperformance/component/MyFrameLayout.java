@@ -9,8 +9,6 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import org.android10.gintonic.annotation.DebugTrace;
-
 /**
  *
  */
@@ -28,7 +26,7 @@ public class MyFrameLayout extends FrameLayout {
     super(context, attrs, defStyle);
   }
 
-  @DebugTrace
+//  @DebugTrace
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);

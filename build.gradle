@@ -1,21 +1,16 @@
 buildscript {
-  repositories {
-    mavenCentral()
-      maven {
-          url 'https://maven.google.com/'
-          name 'Google'
-      }
-      // 本地仓库
-      maven {
-          url uri('repo')
-      }
-  }
-  dependencies {
-      classpath 'com.android.tools.build:gradle:2.1.0'
-      // 引入插件
-      classpath 'com.yxhuang:autotrack.android:1.0.0'
-
-  }
+    repositories {
+        mavenCentral()
+        // 本地仓库
+        maven {
+            url uri('repo')
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+        // 引入插件
+        classpath 'com.yxhuang:autotrack.android:1.0.1'
+    }
 }
 
 allprojects {
